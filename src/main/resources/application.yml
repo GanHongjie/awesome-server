@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: dev
+    include: mybatis-plus-config,log
+  devtools:
+    add-properties: false
+server:
+  port: 9999
+---
+#开发环境配置
+spring:
+  profiles: dev
+  datasource:
+    password: gan945815822.
+    url: jdbc:mysql://localhost:3306/bbs
+    username: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+#测试环境配置
+spring:
+  profiles: stg
+
+server:
+  port: 1001
+
+---
+#生产环境配置
+spring:
+  profiles: prd
+
+server:
+  port: 1002

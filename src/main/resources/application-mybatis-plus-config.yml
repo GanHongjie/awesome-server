@@ -1,0 +1,6 @@
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    aggressive-lazy-loading: false
+    lazy-loading-enabled: true
+  type-aliases-package: com.evan.server.bean
