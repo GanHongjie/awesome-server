@@ -20,8 +20,5 @@ import org.springframework.stereotype.Service;
 @Service
 public class BbsUserServiceImpl extends ServiceImpl<BbsUserMapper, BbsUser> implements BbsUserService {
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
-    }
+
 }

@@ -50,7 +50,7 @@ public class CodeGenerate {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/"+scanner("数据库名"));
+        dsc.setUrl("jdbc:mysql://localhost:3306/"+scanner("数据库名")+"?serverTimezone=UTC");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
         dsc.setPassword("gan945815822.");

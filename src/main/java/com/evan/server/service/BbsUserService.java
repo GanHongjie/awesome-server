@@ -12,6 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
  * @author geoffrey
  * @since 2019-09-25
  */
-public interface BbsUserService extends IService<BbsUser> , UserDetailsService {
+public interface BbsUserService extends IService<BbsUser>  {
 
 }
