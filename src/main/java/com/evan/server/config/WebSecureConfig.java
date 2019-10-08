@@ -2,13 +2,25 @@ package com.evan.server.config;
 
 import com.evan.server.service.BbsUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -20,6 +32,8 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
     BbsUserService userService;
     @Autowired
     AuthenticationAccessDeniedHandler handler;
+    @Value("${swagger.isSwaggerEnable}")
+    private boolean isSwaggerEnable;
 
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,29 +53,43 @@ public class WebSecureConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // TODO: 2019/9/26 配置权限
-//        http.authorizeRequests();
-//        http.authorizeRequests()
-//                .antMatchers("/admin/category/all").authenticated()
-//                .antMatchers("/admin/**", "/reg").hasRole("超级管理员")
-//                .anyRequest().authenticated()//其他的路径都是登录后即可访问
-//                .and().formLogin().loginPage("/login_page").successHandler((httpServletRequest, httpServletResponse, authentication) -> {
-//            httpServletResponse.setContentType("application/json;charset=utf-8");
-//            PrintWriter out = httpServletResponse.getWriter();
-//            out.write("{\"status\":\"success\",\"msg\":\"登录成功\"}");
-//            out.flush();
-//            out.close();
-//        })
-//                .failureHandler((httpServletRequest, httpServletResponse, e) -> {
-//                    httpServletResponse.setContentType("application/json;charset=utf-8");
-//                    PrintWriter out = httpServletResponse.getWriter();
-//                    out.write("{\"status\":\"error\",\"msg\":\"登录失败\"}");
-//                    out.flush();
-//                    out.close();
-//                }).loginProcessingUrl("/login")
-//                .usernameParameter("username").passwordParameter("password").permitAll()
-//                .and().logout().permitAll().and().csrf().disable().exceptionHandling().accessDeniedHandler(handler);
-    http.authorizeRequests().anyRequest().permitAll().and().logout().permitAll();
+        // 所有role都可以访问的路径
+        String[] whiteList = {"/introduction/**", "/team/**", "/teachContent/**", "/teachMethod/**", "/teachCondition/**", "/teachEffect/**", "/hello/*", "/user/*"};
+        // 在开发环境中，开启swagger接口
+        if (isSwaggerEnable) {
+            http.authorizeRequests()
+                    // 白名单中的接口都能访问
+                    .antMatchers(whiteList).permitAll()
+
+                    .antMatchers("/swagger-ui.html").permitAll()
+                    .antMatchers("/swagger-resources/**").permitAll()
+                    .antMatchers("/images/**").permitAll()
+                    .antMatchers("/webjars/**").permitAll()
+                    .antMatchers("/v2/api-docs").permitAll()
+                    .antMatchers("/configuration/ui").permitAll()
+                    .antMatchers("/configuration/security").permitAll()
+
+                    // 否则需要登入拉去权限
+                    .antMatchers("/admin/*").hasRole("admin")
+                    .antMatchers("/teacher/**").hasRole("teacher")
+                    .antMatchers("/student/**").hasRole("student")
+                    .anyRequest().authenticated().and()
+                    .csrf().disable()
+                    // 允许跨域
+                    .cors();
+        } else {
+            http.authorizeRequests()
+                    // 白名单中的接口都能访问
+                    .antMatchers(whiteList).permitAll()
+                    // 否则需要登入拉去权限
+                    .antMatchers("/admin/*").hasRole("admin")
+                    .antMatchers("/teacher/**").hasRole("teacher")
+                    .antMatchers("/student/**").hasRole("student")
+                    .anyRequest().authenticated().and()
+                    .csrf().disable()
+                    // 允许跨域
+                    .cors();
+        }
     }
 
 }

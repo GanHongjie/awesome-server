@@ -4,8 +4,8 @@ mybatis-plus:
     aggressive-lazy-loading: false
     lazy-loading-enabled: true
   type-aliases-package: com.evan.server.bean
+#config your SQL connection
 spring:
-  profiles: dev
   datasource:
     password: gan945815822.
     url: jdbc:mysql://localhost:3306/evan_server?serverTimezone=UTC

@@ -4,12 +4,22 @@ spring:
     include: mybatis-plus-config,log
   devtools:
     add-properties: false
+
 ---
 #开发环境配置
 
 server:
   port: 8081
-
+spring:
+  profiles: dev
+swagger:
+  isSwaggerEnable: true
+jwt:
+  header: Authorization
+  secret: mySecret
+  #token有效期一天
+  expiration: 86400
+  tokenHead: "Bearer "
 ---
 #测试环境配置
 spring:
@@ -21,7 +31,9 @@ server:
 ---
 #生产环境配置
 spring:
-  profiles: prd
+  profiles: pro
 
 server:
   port: 8083
+swagger:
+  isSwaggerEnable: false
